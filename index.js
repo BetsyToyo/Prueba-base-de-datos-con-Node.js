@@ -1,3 +1,5 @@
+const { request } = require('express');
+const { response } = require('express');
 const express= require('express');
 const moment= require('moment')
 const {nuevoUsuario, listaUsuarios, editarUsuario, eliminarUsuario, transferencia, listarTransf}= require('./consultas/consultas');
@@ -9,28 +11,22 @@ app.get('/', (request, response)=>{
     response.sendFile(`${__dirname}/index.html`)    
 });
 
+
 app.post('/usuario',async(request, response)=>{
     const {nombre, balance}= request.body
     const parametros={
         nombre, balance
     }
-    try {
-       const respuesta= nuevoUsuario(parametros)
-       response.json(respuesta).status(201)
-    } catch (error) {
-        console.log(error.message)
-        response.status(500)
-    }
+    
+    const respuesta= await nuevoUsuario(parametros)    
+    response.status(respuesta.mensaje? 500 : 201).json(respuesta.mensaje? respuesta.mensaje : respuesta )    
 })
 
 app.get('/usuarios', async (request, response)=>{
-    try {
-       const respuesta= await listaUsuarios()        
-       response.json(respuesta).status(200)
-    } catch (error) {
-        console.log(error.message)
-        response.status(500)
-    }
+     
+    const respuesta= await listaUsuarios()        
+    response.status(respuesta.mensaje? 500 : 200).json(respuesta.mensaje? respuesta.mensaje : respuesta )
+    
 })
 
 app.put('/usuario', async (request, response)=>{
@@ -39,24 +35,23 @@ app.put('/usuario', async (request, response)=>{
     const parametros={
         name, balance, id
     }
-    try {
-        const respuesta= editarUsuario(parametros)
-        response.json(respuesta).status(201)
-    } catch (error) {
-        console.log(error.message)
-        response.status(500)
-    }
+    const respuesta= await editarUsuario(parametros)
+    response.status(respuesta.mensaje? 500 : 200).json(respuesta.mensaje? respuesta.mensaje : respuesta )   
 })
 
 app.delete('/usuario', async(request, response)=>{
-    const id= request.query.id
-    try {
-        const respuesta= await eliminarUsuario(id)
-        response.json(respuesta).status(200)
-    } catch (error) {
-        console.log(error.message)
-        response.status(500)
+    const id= request.query.id    
+    const respuesta= await eliminarUsuario(id)
+    response.status(respuesta.mensaje? 500 : 200).json(respuesta.mensaje? respuesta.mensaje : respuesta )     
+})
+
+app.use('/transferencia', (request, response, next)=>{
+    const {emisor, receptor, monto}=request.body
+    if (emisor === receptor) {
+        response.status(500).json({mensaje: "El usuario emisor no puede ser el mismo receptor"})
+        return false
     }
+    next()
 })
 
 app.post('/transferencia',async (request, response)=>{
@@ -65,21 +60,13 @@ app.post('/transferencia',async (request, response)=>{
     const parametros={
         emisor, receptor, monto, fecha
     }
-    try {
-        const respuesta= transferencia(parametros)
-        response.json(respuesta).status(201)
-    } catch (error) {
-        console.log(error.message)
-        response.status(500)
-    }
+ 
+    const respuesta= await transferencia(parametros)
+    console.log(respuesta)
+    response.status(respuesta.mensaje? 500 : 201).json(respuesta.mensaje? respuesta.mensaje : respuesta )       
 })
 
-app.get('/transferencias', async (request, response)=>{
-    try {
-        const respuesta= await listarTransf()
-        response.json(respuesta).status(200)
-    } catch (error) {
-        console.log(error.message)
-        response.status(500)
-    }
+app.get('/transferencias', async (request, response)=>{    
+    const respuesta= await listarTransf()
+    response.status(respuesta.mensaje? 500 : 200).json(respuesta.mensaje? respuesta.mensaje : respuesta )      
 })

@@ -18,7 +18,7 @@ const nuevoUsuario= async(datos)=>{
         const { rows }=await pool.query(parametros)
         return rows
     } catch (error) {
-        console.log(error.message)
+        return { status: 'ERROR', mensaje: error.message }
     }
 }
 
@@ -28,7 +28,7 @@ const listaUsuarios= async()=>{
         const { rows }=await pool.query(consultaSql)
         return rows
     } catch (error) {
-        console.log(error.message)
+       return { status: 'ERROR', mensaje: error.message }
     }
 }
 
@@ -42,7 +42,7 @@ const editarUsuario= async(datos)=>{
         const { rows }= await pool.query(parametros)
         return rows
     } catch (error) {
-        console.log(error.message)
+        return { status: 'ERROR', mensaje: error.message }
     }
 }
 
@@ -52,7 +52,7 @@ const eliminarUsuario= async (id)=>{
         const { rows }= await pool.query(sql)
         return rows
     } catch (error) {
-        console.log(error.message)
+        return { status: 'ERROR', mensaje: error.message }
     }
 }
 
@@ -68,7 +68,7 @@ const transferencia= async(datos)=>{
             text: 'INSERT INTO transferencias (emisor, receptor, monto, fecha) VALUES($1, $2, $3, $4) RETURNING*',
             values:[idEmisor.rows[0].id, idReceptor.rows[0].id, monto, fecha],            
         }
-        console.log(idEmisor.rows[0].id,idReceptor.rows[0].id)
+       
         const paramUsuEnvia={
             text:'UPDATE usuarios SET balance = balance - $1 WHERE id=$2 RETURNING*',
             values: [monto, idEmisor.rows[0].id]
@@ -86,8 +86,7 @@ const transferencia= async(datos)=>{
         return{status: 'OK', transferencia: transferencia.rows[0], envia: usuEnvia.rows[0], recibe: usuRecibe.rows[0]}
         
     } catch (error) {
-        await pool.query("ROLLBACK");
-        console.log(error.message)
+        await pool.query("ROLLBACK");        
         return { status: 'ERROR', mensaje: error.message }
     }
 }
@@ -103,11 +102,10 @@ const listarTransf= async()=>{
     }
 
     try {
-        const { rows }= await pool.query(parametros)
-        console.log(rows)
+        const { rows }= await pool.query(parametros)        
         return rows
     } catch (error) {
-        console.log(error.message)
+        return { status: 'ERROR', mensaje: error.message }
     }
 }
 
