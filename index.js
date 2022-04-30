@@ -61,8 +61,7 @@ app.post('/transferencia',async (request, response)=>{
         emisor, receptor, monto, fecha
     }
  
-    const respuesta= await transferencia(parametros)
-    console.log(respuesta)
+    const respuesta= await transferencia(parametros)    
     response.status(respuesta.mensaje? 500 : 201).json(respuesta.mensaje? respuesta.mensaje : respuesta )       
 })
 
