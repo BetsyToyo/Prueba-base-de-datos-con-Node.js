@@ -187,6 +187,7 @@
     }
   };
 
+  //Usuario
   $("form:first").submit(async (e) => {
     e.preventDefault();
     let nombre = $("form:first input:first").val();
@@ -266,7 +267,7 @@
   };
 
   const eliminarUsuario = async (id) => {
-    const response = await fetch(`/usuario?id=${id}`, {
+     const response = await fetch(`/usuario?id=${id}`, {
       method: "DELETE",
     });
     getUsuarios();

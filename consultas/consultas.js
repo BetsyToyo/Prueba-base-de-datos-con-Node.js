@@ -46,7 +46,7 @@ const editarUsuario= async(datos)=>{
     }
 }
 
-const eliminarUsuario= async (id)=>{
+const eliminarUsuario= async (id)=>{    
     const sql= `DELETE FROM usuarios WHERE id=${id}`
     try {
         const { rows }= await pool.query(sql)

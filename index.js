@@ -1,5 +1,3 @@
-const { request } = require('express');
-const { response } = require('express');
 const express= require('express');
 const moment= require('moment')
 const {nuevoUsuario, listaUsuarios, editarUsuario, eliminarUsuario, transferencia, listarTransf}= require('./consultas/consultas');
